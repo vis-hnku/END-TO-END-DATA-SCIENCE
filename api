@@ -1,0 +1,32 @@
+from fastapi import FastAPI
+from pydantic import BaseModel
+import numpy as np
+import pickle
+import os
+
+app = FastAPI(title="Iris Classifier API")
+
+MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../models/model.pkl"))
+ENCODER_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../models/label_encoder.pkl"))
+
+with open(MODEL_PATH, "rb") as f:
+    model = pickle.load(f)
+with open(ENCODER_PATH, "rb") as f:
+    le = pickle.load(f)
+
+class IrisInput(BaseModel):
+    sepal_length: float
+    sepal_width: float
+    petal_length: float
+    petal_width: float
+
+@app.post("/predict")
+def predict_species(input: IrisInput):
+    features = np.array([[input.sepal_length, input.sepal_width, input.petal_length, input.petal_width]])
+    pred = model.predict(features)
+    species = le.inverse_transform(pred)
+    return {"species": species[0]}
+
+@app.get("/")
+def read_root():
+    return {"msg": "Iris Classifier API. POST to /predict with feature data."}
