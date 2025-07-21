@@ -1,0 +1,17 @@
+END-TO-END-DATA-SCIENCE/
+│
+├── data/
+│   ├── raw/
+│   └── processed/
+├── models/
+├── notebooks/
+├── src/
+│   ├── data_collection.py
+│   ├── preprocessing.py
+│   ├── train_model.py
+│   └── predict.py
+│   └── api/
+│       ├── app.py
+│       └── requirements.txt
+├── requirements.txt
+└── README.md
