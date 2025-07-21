@@ -1,0 +1,25 @@
+import pandas as pd
+import os
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+
+def preprocess():
+    os.makedirs("../data/processed", exist_ok=True)
+    df = pd.read_csv("../data/raw/iris.csv")
+    le = LabelEncoder()
+    df['species'] = le.fit_transform(df['species'])
+    X = df.drop("species", axis=1)
+    y = df["species"]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train.to_csv("../data/processed/X_train.csv", index=False)
+    X_test.to_csv("../data/processed/X_test.csv", index=False)
+    y_train.to_csv("../data/processed/y_train.csv", index=False)
+    y_test.to_csv("../data/processed/y_test.csv", index=False)
+    # Save the label encoder for inference
+    import pickle
+    with open("../models/label_encoder.pkl", "wb") as f:
+        pickle.dump(le, f)
+    print("Data preprocessed and saved to data/processed/.")
+
+if __name__ == "__main__":
+    preprocess()
